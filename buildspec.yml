@@ -4,7 +4,7 @@ env:
   variables:
     REACT_APP_API_URL: "https://your-api.com"
   secrets-manager:
-    SONAR_TOKEN: "fron-backend:SONAR_TOKEN"  # Get from AWS Secrets Manager
+    SONAR_TOKEN: "front-backend:SONAR_TOKEN"  # Get from AWS Secrets Manager
 
 phases:
   install:
