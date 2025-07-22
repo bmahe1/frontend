@@ -3,7 +3,8 @@ version: 0.2
 env:
   variables:
     REACT_APP_API_URL: "https://your-api.com"
-    S3_BUCKET: "front-backend123"
+  secrets-manager:
+    SONAR_TOKEN: "fron-backend:SONAR_TOKEN"  # Get from AWS Secrets Manager
 
 phases:
   install:
@@ -14,25 +15,20 @@ phases:
       - npm ci
   pre_build:
     commands:
-      - echo Running tests...
-      - npm run test -- --coverage
+      - echo Running tests and generating coverage...
+      - npm test
   build:
     commands:
-      - echo Running SonarCloud scan...
-      - npm install -g sonarqube-scanner
-      - sonar-scanner \
-          -Dsonar.projectKey=your-org_frontend \
-          -Dsonar.organization=your-org \
-          -Dsonar.sources=src \
-          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-          -Dsonar.login=$SONAR_TOKEN
-      - echo Building React app...
+      - echo Building React App...
       - npm run build
+      - echo Running SonarCloud Scan...
+      - npm install -g sonar-scanner
+      - sonar-scanner
   post_build:
     commands:
-      - echo Build completed. Deploying to S3...
-      - aws s3 sync build/ s3://$S3_BUCKET --delete
+      - echo Build complete
+
 artifacts:
+  base-directory: build
   files:
     - '**/*'
-  base-directory: build
