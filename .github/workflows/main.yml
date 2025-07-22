@@ -1,0 +1,34 @@
+version: 0.2
+
+env:
+  variables:
+    REACT_APP_API_URL: "https://your-api.com"
+  secrets-manager:
+    SONAR_TOKEN: "front-backend:SONAR_TOKEN"  # Get from AWS Secrets Manager
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing dependencies...
+      - npm ci
+  pre_build:
+    commands:
+      - echo Running tests and generating coverage...
+      - npm test
+  build:
+    commands:
+      - echo Building React App...
+      - npm run build
+      - echo Running SonarCloud Scan...
+      - npm install -g sonar-scanner
+      - sonar-scanner
+  post_build:
+    commands:
+      - echo Build complete
+
+artifacts:
+  base-directory: build
+  files:
+    - '**/*'
