@@ -1,0 +1,33 @@
+version: 0.2
+
+env:
+  variables:
+    REACT_APP_API_URL: "https://your-api.com"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing dependencies...
+      - npm install
+  pre_build:
+    commands:
+      - echo Running tests and collecting coverage...
+      - npm run test -- --coverage
+  build:
+    commands:
+      - echo Running SonarCloud scan...
+      - npm install -g sonarqube-scanner
+      - sonar-scanner \
+          -Dsonar.projectKey=your-org_frontend \
+          -Dsonar.organization=your-org \
+          -Dsonar.sources=src \
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+          -Dsonar.login=$SONAR_TOKEN
+  post_build:
+    commands:
+      - echo Build completed successfully.
+artifacts:
+  files:
+    - '**/*'
