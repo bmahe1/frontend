@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     REACT_APP_API_URL: "https://your-api.com"
-    S3_BUCKET: "your-s3-bucket-name"
+    S3_BUCKET: "front-backend123"
 
 phases:
   install:
