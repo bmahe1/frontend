@@ -1,24 +1,26 @@
 version: 0.2
 
 env:
-  variables:
-    REACT_APP_API_URL: "https://your-api.com"
   secrets-manager:
-    SONAR_TOKEN: "front-backend:SONAR_TOKEN"  # Get from AWS Secrets Manager
+    SONAR_TOKEN: "front-backend:SONAR_TOKEN"  # Fetch from AWS Secrets Manager
+  variables:
+    S3_BUCKET_NAME: "front-backend123 "  # Replace with your actual S3 bucket name
 
 phases:
   install:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Pin npm version
+      - echo Pinning npm version
       - npm install -g npm@8.19.3
       - echo Installing dependencies
       - npm ci --retry 3 || npm install
+
   pre_build:
     commands:
       - echo Running tests and generating coverage...
       - npm test
+
   build:
     commands:
       - echo Building React App...
@@ -26,9 +28,11 @@ phases:
       - echo Running SonarCloud Scan...
       - npm install -g sonar-scanner
       - sonar-scanner
+
   post_build:
     commands:
-      - echo Build complete
+      - echo Deploying to S3...
+      - aws s3 sync build/ s3://$S3_BUCKET_NAME/ --delete
 
 artifacts:
   base-directory: build
