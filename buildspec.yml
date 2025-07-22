@@ -11,8 +11,10 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing dependencies...
-      - npm ci
+      - echo Pin npm version
+      - npm install -g npm@8.19.3
+      - echo Installing dependencies
+      - npm ci --retry 3 || npm install
   pre_build:
     commands:
       - echo Running tests and generating coverage...
